@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.study.jsp.board.dao.IBoardDAO">
+
+	<select id="getBoardList" resultType="com.study.jsp.board.dto.BoardDTO">
+		SELECT 
+		      a.board_no
+		    , a.board_title
+		    , a.board_content
+		    , a.mem_id
+		    , b.mem_name
+		    , a.board_date
+		FROM 
+			boards a, members b
+		WHERE 1=1
+		  AND  a.mem_id = b.mem_id
+		  AND  a.del_yn = 'N'
+	</select>
+	
+	<insert id="writeBoard" parameterType="com.study.jsp.board.dto.BoardDTO">
+		INSERT INTO boards (
+		      board_no
+		    , board_title
+		    , mem_id
+		    , board_content
+		    , board_date
+		    , del_yn
+		) VALUES (
+		    (SELECT COUNT(*) + 1 FROM boards)
+		    , #{boardTitle}
+		    , #{memId}
+		    , #{boardContent}
+		    , SYSDATE
+		    , 'N'
+		)
+	</insert>
+	
+	<select id="getBoard" resultType="com.study.jsp.board.dto.BoardDTO" parameterType="int">
+		SELECT 
+		      a.board_no
+		    , a.board_title
+		    , a.board_content
+		    , a.mem_id
+		    , b.mem_name
+		    , a.board_date
+		FROM 
+			boards a, members b
+		WHERE 
+			a.mem_id = b.mem_id
+		  AND
+		  	a.board_no = #{boardNo}
+	</select>
+
+	<update id="deleteBoard" parameterType="int">
+		UPDATE 
+			boards
+		SET 
+			del_yn = 'Y'
+		WHERE 
+			board_no = #{boardNo}
+	</update>
+	
+	<update id="updateBoard" parameterType="com.study.jsp.board.dto.BoardDTO">
+		UPDATE 
+			boards
+		SET 
+			board_title = #{boardTitle}
+		  , board_content = #{boardContent}
+		WHERE 
+			board_no = #{boardNo}	
+	</update>
+	
+	<select id="getReplyList" parameterType="int" resultType="com.study.jsp.board.dto.ReplyDTO">
+		SELECT 
+		      a.reply_no
+		    , a.mem_id
+		    , b.mem_name
+		    , a.reply_content
+		    , TO_CHAR(a.reply_date, 'MM/dd') AS reply_date 
+		FROM replys a, members b
+		WHERE a.mem_id = b.mem_id
+		AND a.board_no = #{boardNo }
+		AND a.del_yn = 'N'
+		ORDER BY reply_date DESC
+	</select>
+	
+	<select id="getReply" parameterType="String" resultType="com.study.jsp.board.dto.ReplyDTO">
+		SELECT 
+		      a.reply_no
+		    , a.mem_id
+		    , b.mem_name
+		    , a.reply_content
+		    , TO_CHAR(a.reply_date, 'MM/dd') AS reply_date 
+		FROM replys a, members b
+		WHERE a.mem_id = b.mem_id
+		AND a.reply_no = #{replyNo }
+	</select>
+	
+	<insert id="writeReply" parameterType="com.study.jsp.board.dto.ReplyDTO">
+		INSERT INTO replys (
+		      reply_no
+		    , board_no
+		    , mem_id
+		    , reply_content
+		    , reply_date
+		    , del_yn
+		) VALUES (
+		    #{replyNo}
+		    , #{boardNo}
+		    , #{memId}
+		    , #{replyContent}
+		    , SYSDATE
+		    , 'N'
+		)
+	</insert>
+	
+	<update id="delReply" parameterType="String">
+		UPDATE replys
+		SET del_yn = 'Y'
+		WHERE reply_no = #{replyNo }
+	</update>
+	
+	<select id="searchBoardList" parameterType="com.study.jsp.commons.Search" resultType="com.study.jsp.board.dto.BoardDTO">
+		SELECT 
+		      a.board_no
+		    , a.board_title
+		    , a.board_content
+		    , a.mem_id
+		    , b.mem_name
+		    , a.board_date
+		FROM boards a, members b
+		WHERE a.mem_id = b.mem_id
+		  AND a.del_yn = 'N'
+		<choose>
+			<when test='searchOption=="title"'>AND a.board_title LIKE '%' || #{keyword } || '%'</when>
+		 	<when test='searchOption=="content"'>AND a.board_content LIKE '%' || #{keyword } || '%'</when>
+		 	<when test='searchOption=="name"'>AND b.mem_name LIKE '%' || #{keyword } || '%'</when>
+		</choose> 
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
