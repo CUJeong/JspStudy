@@ -66,7 +66,7 @@
 								<input type="hidden" name="memId" value="${sessionScope.login.memId }">
 	           		    	</div>
 	           		    	<div class="col-3">
-					              <button type="button" class="btn btn-warning me-2" onclick="f_reple('${sessionScope.login.memId }')">등록</button>
+					              <button type="button" class="btn btn-warning me-2" onclick="f_reple()">등록</button>
 	           		    	</div>
           		    	</div>
                		</div>
@@ -155,11 +155,12 @@
 				
 			}
 			
-			function f_reple(p_id){
+			function f_reple(){
 				
-				console.log("p_id: " + p_id);
+				let v_id = '${sessionScope.login.memId }';
+				console.log("v_id: " + v_id);
 				
-				if(p_id === undefined){
+				if(!v_id){
 					alert('댓글은 로그인 후 작성 가능합니다.');
 					location.href = '<c:url value="/loginView" />';
 				}
@@ -224,7 +225,8 @@
 			        
 			      }
 			    };
-			    //xhr.send(v_data);   
+			    //xhr.send(v_data);
+			    console.log(JSON.stringify(v_json));
 			    xhr.send(JSON.stringify(v_json));   
 			    
 			    // 위와 같은 동작

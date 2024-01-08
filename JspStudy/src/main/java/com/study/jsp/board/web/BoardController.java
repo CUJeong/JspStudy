@@ -82,6 +82,7 @@ public class BoardController {
 		return "redirect:/boardView";	
 	}
 	
+	// 아래부분 참고
 	@RequestMapping("/boardDetailView")
 	public String boardDetailView(int boardNo, Model model) throws Exception {
 		
