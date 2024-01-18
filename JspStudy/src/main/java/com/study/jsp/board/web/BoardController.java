@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.json.simple.JSONObject;
@@ -38,6 +39,9 @@ public class BoardController {
 	@Autowired
 	BoardService boardService;
 	
+	@Autowired
+	private ServletContext servletContext;   // 현재 프로젝트 파일의 실제 하드디스크 내 경로를 알 수 있음
+	
 	@ExceptionHandler(Exception.class)
 	public String errorView(Exception e) {
 		e.printStackTrace();
@@ -53,6 +57,10 @@ public class BoardController {
 		
 		Gson gson = new Gson();
 		model.addAttribute("gsonboardList", gson.toJson(boardList));
+		
+		// 현재 프로젝트 파일(.war) 내부 경로에 접근할 수 있음 (권장되지 않음. 재배포시 초기화됨)
+		System.out.println(servletContext.getRealPath("/webapp/resources/attach"));
+	
 		
 		return "board/boardView";
 	}
