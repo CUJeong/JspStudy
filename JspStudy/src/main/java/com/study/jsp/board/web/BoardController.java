@@ -55,6 +55,7 @@ public class BoardController {
 		 
 		model.addAttribute("boardList", boardList);
 		
+		// 자바스크립트의 객체로 데이터를 보내기 위해 JSON String으로 List를 변환하여 모델에 담기
 		Gson gson = new Gson();
 		model.addAttribute("gsonboardList", gson.toJson(boardList));
 		
